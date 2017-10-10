@@ -41,12 +41,9 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 
-		// received a message
-		log.Printf("received: %s", message)
-		isValidFormat := validateRequestValidFormat(message)
-		if isValidFormat {
-			fmt.Println("valid format")
-		}
+		// useless at the moment
+		parts := ParseMessage(message)
+		fmt.Println(parts)
 
 		// send the message to the client
 		err = conn.WriteMessage(mt, message)
@@ -57,46 +54,6 @@ func echo(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-}
-
-
-func validateRequestValidFormat(message []byte)(bool){
-	// check length not nil
-	// message get part
-
-	/* message composition:
-
-	[loginMethod][UserName|Password][functionName][argumentsArray]
-
-	arguments array is a string array
-	this implie that we need to check format when sending
-	thus, a username/functionName/password/argument cannot contain a '[', a ']' or a '|'
-
- 	var my_message MessageFormatFromStandardClient
-	 */
-
-	// validate format
-	opening_counter := 0
-	closing_counter := 0
-
-	for i:= 0; i < len(message) ; i++  {
-		// count '[' and ']' --> this need to be the same number to be valid
-		if message[i] == '[' {
-			opening_counter++
-		} else if message[i] == ']'{
-			closing_counter++
-		}
-	}
-
-	if closing_counter != opening_counter {
-		return false
-	}
-
-	if opening_counter != 4 {
-		return false
-	}
-
-	return true
 }
 
 
